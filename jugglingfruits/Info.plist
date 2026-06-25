@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>SigmarOne-Regular.ttf</string>
+	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+	<dict>
+	<key>CFBundleURLSchemes</key>
+	<array>
+		<string>fbAPP-ID</string>
+	</array>
+	</dict>
+	</array>
+	<key>FacebookAppID</key>
+	<string>APP-ID</string>
+	<key>FacebookClientToken</key>
+	<string>CLIENT-TOKEN</string>
+	<key>FacebookDisplayName</key>
+	<string>APP-NAME</string>
+<key>FacebookAdvertiserIDCollectionEnabled</key>
+<string>FALSE</string>
+<key>FacebookAutoLogAppEventsEnabled</key>
+<string>FALSE</string>
+<key>NSUserTrackingUsageDescription</key>
+<string>Need tracking for analytics and to deliver a tailored experience</string>
+</dict>
+</plist>
