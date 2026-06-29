@@ -9,6 +9,55 @@ import SwiftUI
 import GameKit
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
+    private enum FruitBodyShape {
+        case circle(radiusScale: CGFloat)
+        case ellipse(widthScale: CGFloat, heightScale: CGFloat)
+    }
+
+    private struct FruitPhysicsProfile {
+        let assetName: String
+        let displaySize: CGSize
+        let bodyShape: FruitBodyShape
+    }
+
+    private static let contactCategoryBall: UInt32 = 0x1 << 0
+    private static let contactCategoryLeg: UInt32 = 0x1 << 1
+
+    private static let fruitProfiles: [FruitPhysicsProfile] = [
+        tallFruit("Group-0", width: 49, height: 74),
+        wideFruit("Group-1", width: 78, height: 53),
+        tallFruit("Group-2", width: 55, height: 67),
+        tallFruit("Group-3", width: 57, height: 67),
+        wideFruit("Group-4", width: 70, height: 35),
+        roundFruit("Group-5", width: 46, height: 45),
+        roundFruit("Group-6", width: 39, height: 39),
+        tallFruit("Group-7", width: 44, height: 51),
+        tallFruit("Group-8", width: 46, height: 74),
+        tallFruit("Group-9", width: 42, height: 64),
+        roundFruit("Group-10", width: 49, height: 54),
+        roundFruit("Group-11", width: 49, height: 54),
+        wideFruit("Group-12", width: 81, height: 46),
+        wideFruit("Group-13", width: 70, height: 35),
+        wideFruit("Group-14", width: 67, height: 24),
+        tallFruit("Group-15", width: 44, height: 52),
+        tallFruit("Group-16", width: 26, height: 40),
+        wideFruit("Group-17", width: 78, height: 47),
+        roundFruit("Group-18", width: 44, height: 44),
+        tallFruit("Group-19", width: 44, height: 89),
+        tallFruit("Group-20", width: 42, height: 64),
+        wideFruit("Group-21", width: 82, height: 54),
+        tallFruit("Group-22", width: 49, height: 74),
+        tallFruit("Group-23", width: 44, height: 52),
+        roundFruit("Group-24", width: 32, height: 34),
+        wideFruit("Group-25", width: 81, height: 53),
+        tallFruit("Group-26", width: 56, height: 68),
+        roundFruit("Group-27", width: 53, height: 44),
+        wideFruit("Group-28", width: 70, height: 35),
+        tallFruit("Group-29", width: 59, height: 65),
+        tallFruit("Group-30", width: 41, height: 62),
+        roundFruit("Group-31", width: 54, height: 47)
+    ]
+
     var rotation: CGFloat = 0.0
 
     var initialPositionY: CGFloat = UIScreen.main.bounds.height - 300
@@ -54,10 +103,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     override func didMove(to view: SKView) {
-        fruits = []
-        for i in 0...31 {
-            fruits.append("Group-\(i)")
-        }
+        configureFruitList()
         
         self.view?.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         self.physicsWorld.gravity = CGVector(dx: 0.0, dy: -9.8)
@@ -96,31 +142,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         spriteBall.position = CGPoint(x: initialPositionX, y: initialPositionY )
         spriteBall.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        spriteBall.size = CGSize(width: 50, height: 50)
         spriteBall.zPosition = 1
         spriteBall.name = "ballNode"
         spriteBall.alpha = 1
         spriteBall.blendMode = .alpha
+        applyFruitProfile(at: currentFruit, preservingMotion: false, affectedByGravity: false)
         
-        spriteBall.physicsBody = SKPhysicsBody(texture: spriteBall.texture! , size: spriteBall.size)
-        spriteBall.physicsBody?.affectedByGravity = false
-        
-        leg.size = CGSize(width: 105.6, height: 456)
-        leg.position = CGPoint(x: 0, y: 200)
-        
-        leg.physicsBody = SKPhysicsBody(texture: leg.texture! , size: leg.size)
-        leg.physicsBody?.affectedByGravity = false
-        leg.physicsBody?.pinned = true
-        leg.physicsBody?.allowsRotation = true
-        leg.physicsBody?.isDynamic = true
-        leg.zRotation = rotation
-        leg.physicsBody?.mass = 5
-        leg.physicsBody?.friction = 0.2
-        leg.physicsBody?.restitution = 0.2
-        leg.physicsBody?.linearDamping = 0.1
-        leg.physicsBody?.angularDamping = 0.1
-        leg.physicsBody?.angularVelocity = 0
-        leg.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+        configureLeg()
 
         
         highscore = UserDefaults.standard.integer(forKey: "highscore")
@@ -148,32 +176,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         spriteBall.position = CGPoint(x: initialPositionX, y: initialPositionY )
         spriteBall.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        spriteBall.size = CGSize(width: 50, height: 50)
         spriteBall.zPosition = 1
         spriteBall.name = "ballNode"
         spriteBall.alpha = 1
         spriteBall.blendMode = .alpha
-        
-        spriteBall.physicsBody = SKPhysicsBody(texture: spriteBall.texture! , size: spriteBall.size)
-        spriteBall.physicsBody?.affectedByGravity = false
+        applyFruitProfile(at: currentFruit, preservingMotion: false, affectedByGravity: false)
         addChild(spriteBall)
         
-        leg.size = CGSize(width: 105.6, height: 456)
-        leg.position = CGPoint(x: 0, y: 200)
-        
-        leg.physicsBody = SKPhysicsBody(texture: leg.texture! , size: leg.size)
-        leg.physicsBody?.affectedByGravity = false
-        leg.physicsBody?.pinned = true
-        leg.physicsBody?.allowsRotation = true
-        leg.physicsBody?.isDynamic = true
-        leg.zRotation = rotation
-        leg.physicsBody?.mass = 5
-        leg.physicsBody?.friction = 0.2
-        leg.physicsBody?.restitution = 0.2
-        leg.physicsBody?.linearDamping = 0.1
-        leg.physicsBody?.angularDamping = 0.1
-        leg.physicsBody?.angularVelocity = 0
-        leg.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+        configureLeg()
         addChild(leg)
 
         
@@ -240,15 +250,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func setupCollision() {
-        let contactCategoryBall: UInt32 = 0x1 << 0
-        let contactCategoryLeg: UInt32 = 0x1 << 1
+        spriteBall.physicsBody?.categoryBitMask = Self.contactCategoryBall
+        leg.physicsBody?.categoryBitMask = Self.contactCategoryLeg
         
-        spriteBall.physicsBody?.categoryBitMask = contactCategoryBall
-        leg.physicsBody?.categoryBitMask = contactCategoryLeg
+        spriteBall.physicsBody?.collisionBitMask = Self.contactCategoryLeg
         
-        spriteBall.physicsBody?.collisionBitMask = contactCategoryLeg
-        
-        spriteBall.physicsBody?.contactTestBitMask = contactCategoryLeg
+        spriteBall.physicsBody?.contactTestBitMask = Self.contactCategoryLeg
     }
 
     func touchDown(atPoint pos : CGPoint) {
@@ -310,9 +317,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
                 
                 started = false
-                playGameNoAdd()
                 currentFruit = 0
-                spriteBall.texture = SKTexture(imageNamed: fruits[currentFruit])
+                playGameNoAdd()
                 showGameOver = true
             }
             
@@ -320,14 +326,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 score += 1
                 touch = false
                 
-                if score % 10 == 0 && score != 0{
-                    if currentFruit < 2 {
-                        currentFruit += 1
-                    } else {
-                        currentFruit = 0
-                    }
-                    spriteBall.texture = SKTexture(imageNamed: fruits[currentFruit])
-                    
+                if score % 10 == 0 && score != 0 {
+                    currentFruit = (currentFruit + 1) % fruits.count
+                    applyFruitProfile(at: currentFruit, preservingMotion: true)
                 }
             }
             
@@ -351,24 +352,147 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         startGameScene = true
         currentFruit = 0
 
-        if fruits.isEmpty {
-            for i in 0...31 {
-                fruits.append("Group-\(i)")
-            }
-        }
+        configureFruitList()
 
         spriteBall.position.y = initialPositionY
         spriteBall.position.x = initialPositionX
-        spriteBall.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-        spriteBall.physicsBody?.angularVelocity = 0
-        spriteBall.physicsBody?.affectedByGravity = false
-
-        if !fruits.isEmpty {
-            spriteBall.texture = SKTexture(imageNamed: fruits[0])
-        }
+        applyFruitProfile(at: currentFruit, preservingMotion: false, affectedByGravity: false)
 
         leg.zRotation = rotation
         leg.physicsBody?.angularVelocity = 0
         leg.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+    }
+
+    func continueAfterRewardedAd() {
+        showGameOver = false
+        touch = false
+        heightInTouch = 0
+        started = true
+        startGameScene = true
+
+        spriteBall.position.y = initialPositionY
+        spriteBall.position.x = initialPositionX
+        applyFruitProfile(at: currentFruit, preservingMotion: false, affectedByGravity: false)
+
+        leg.zRotation = rotation
+        leg.physicsBody?.angularVelocity = 0
+        leg.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+    }
+
+    private func configureFruitList() {
+        fruits = Self.fruitProfiles.map { $0.assetName }
+    }
+
+
+    private func configureLeg() {
+        leg.size = CGSize(width: 105.6, height: 456)
+        leg.position = CGPoint(x: 0, y: 200)
+        
+        leg.physicsBody = SKPhysicsBody(texture: leg.texture! , size: leg.size)
+        leg.physicsBody?.affectedByGravity = false
+        leg.physicsBody?.pinned = true
+        leg.physicsBody?.allowsRotation = true
+        leg.physicsBody?.isDynamic = true
+        leg.zRotation = rotation
+        leg.physicsBody?.mass = 5
+        leg.physicsBody?.friction = 0.2
+        leg.physicsBody?.restitution = 0.2
+        leg.physicsBody?.linearDamping = 0.1
+        leg.physicsBody?.angularDamping = 0.1
+        leg.physicsBody?.angularVelocity = 0
+        leg.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+    }
+
+    private func applyFruitProfile(
+        at index: Int,
+        preservingMotion: Bool,
+        affectedByGravity: Bool? = nil
+    ) {
+        guard Self.fruitProfiles.indices.contains(index) else { return }
+
+        let profile = Self.fruitProfiles[index]
+        let previousVelocity = spriteBall.physicsBody?.velocity ?? .zero
+        let previousAngularVelocity = spriteBall.physicsBody?.angularVelocity ?? 0
+        let previousAffectedByGravity = spriteBall.physicsBody?.affectedByGravity ?? false
+
+        spriteBall.texture = SKTexture(imageNamed: profile.assetName)
+        spriteBall.size = profile.displaySize
+        spriteBall.physicsBody = makeFruitPhysicsBody(for: profile)
+        spriteBall.physicsBody?.allowsRotation = true
+        spriteBall.physicsBody?.affectedByGravity = affectedByGravity ?? previousAffectedByGravity
+        spriteBall.physicsBody?.categoryBitMask = Self.contactCategoryBall
+        spriteBall.physicsBody?.collisionBitMask = Self.contactCategoryLeg
+        spriteBall.physicsBody?.contactTestBitMask = Self.contactCategoryLeg
+
+        if preservingMotion {
+            spriteBall.physicsBody?.velocity = previousVelocity
+            spriteBall.physicsBody?.angularVelocity = previousAngularVelocity
+        } else {
+            spriteBall.physicsBody?.velocity = .zero
+            spriteBall.physicsBody?.angularVelocity = 0
+        }
+    }
+
+    private func makeFruitPhysicsBody(for profile: FruitPhysicsProfile) -> SKPhysicsBody {
+        switch profile.bodyShape {
+        case .circle(let radiusScale):
+            let radius = min(profile.displaySize.width, profile.displaySize.height) * radiusScale / 2
+            return SKPhysicsBody(circleOfRadius: radius)
+        case .ellipse(let widthScale, let heightScale):
+            return SKPhysicsBody(polygonFrom: ellipsePath(
+                width: profile.displaySize.width * widthScale,
+                height: profile.displaySize.height * heightScale
+            ))
+        }
+    }
+
+    private func ellipsePath(width: CGFloat, height: CGFloat) -> CGPath {
+        let path = CGMutablePath()
+        let pointCount = 12
+        let radiusX = width / 2
+        let radiusY = height / 2
+
+        for index in 0..<pointCount {
+            let angle = CGFloat(index) / CGFloat(pointCount) * CGFloat.pi * 2
+            let point = CGPoint(x: cos(angle) * radiusX, y: sin(angle) * radiusY)
+            if index == 0 {
+                path.move(to: point)
+            } else {
+                path.addLine(to: point)
+            }
+        }
+
+        path.closeSubpath()
+        return path
+    }
+
+    private static func roundFruit(_ assetName: String, width: CGFloat, height: CGFloat) -> FruitPhysicsProfile {
+        FruitPhysicsProfile(
+            assetName: assetName,
+            displaySize: normalizedSize(width: width, height: height),
+            bodyShape: .circle(radiusScale: 0.9)
+        )
+    }
+
+    private static func tallFruit(_ assetName: String, width: CGFloat, height: CGFloat) -> FruitPhysicsProfile {
+        FruitPhysicsProfile(
+            assetName: assetName,
+            displaySize: normalizedSize(width: width, height: height),
+            bodyShape: .ellipse(widthScale: 0.82, heightScale: 0.94)
+        )
+    }
+
+    private static func wideFruit(_ assetName: String, width: CGFloat, height: CGFloat) -> FruitPhysicsProfile {
+        FruitPhysicsProfile(
+            assetName: assetName,
+            displaySize: normalizedSize(width: width, height: height),
+            bodyShape: .ellipse(widthScale: 0.95, heightScale: 0.76)
+        )
+    }
+
+    private static func normalizedSize(width: CGFloat, height: CGFloat) -> CGSize {
+        let maxDimension: CGFloat = 56
+        let scale = maxDimension / max(width, height)
+        return CGSize(width: width * scale, height: height * scale)
     }
 }

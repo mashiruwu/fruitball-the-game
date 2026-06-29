@@ -11,9 +11,12 @@ struct GameOverView: View {
 
     @State var highscore = UserDefaults.standard.integer(forKey: "highscore")
     let score: Int
+    let canUseRewardedContinue: Bool
     let onPlayAgain: () -> Void
+    let onRewardedContinue: () -> Void
     
     @Environment(\.dismiss) var dismiss
+    @ObservedObject private var adMobManager = AdMobManager.shared
 
     let gameService = GameService()
     var body: some View {
@@ -87,6 +90,18 @@ struct GameOverView: View {
                                     .padding(.leading, 24)
                             })
                         }
+                        if canUseRewardedContinue && adMobManager.rewardedAdIsReady {
+                            Button(action: {
+                                adMobManager.showRewardedContinue {
+                                    onRewardedContinue()
+                                }
+                            }, label: {
+                                Text("CONTINUE")
+                                    .font(.custom("SigmarOne-Regular", size: 24))
+                                    .foregroundStyle(Color("Brown"))
+                                    .padding(.top, 12)
+                            })
+                        }
 
                         Spacer()
 
@@ -98,6 +113,9 @@ struct GameOverView: View {
             .ignoresSafeArea(.all)
             .onAppear(){
                 highscore = UserDefaults.standard.integer(forKey: "highscore")
+                if !canUseRewardedContinue {
+                    adMobManager.showInterstitialAfterGameOverIfNeeded()
+                }
         }
     }
 }

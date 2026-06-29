@@ -25,7 +25,16 @@
 <string>FALSE</string>
 <key>FacebookAutoLogAppEventsEnabled</key>
 <string>FALSE</string>
+<key>GADApplicationIdentifier</key>
+<string>ca-app-pub-2782621432038890~4619665963</string>
 <key>NSUserTrackingUsageDescription</key>
 <string>Need tracking for analytics and to deliver a tailored experience</string>
+<key>SKAdNetworkItems</key>
+<array>
+	<dict>
+		<key>SKAdNetworkIdentifier</key>
+		<string>cstr6suwn9.skadnetwork</string>
+	</dict>
+</array>
 </dict>
 </plist>

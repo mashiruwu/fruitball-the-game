@@ -10,6 +10,7 @@ import UIKit
 import AVFAudio
 import FacebookCore
 import AppTrackingTransparency
+import GoogleMobileAds
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(
@@ -22,6 +23,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             application,
             didFinishLaunchingWithOptions: launchOptions
         )
+        Task { @MainActor in
+            AdMobManager.shared.start()
+        }
 
         return true
     }
@@ -98,5 +102,3 @@ struct jugglingfruitsApp: App {
           
         }
 }
-
-

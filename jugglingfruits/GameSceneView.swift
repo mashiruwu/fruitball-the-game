@@ -11,11 +11,13 @@ struct GameSceneView: View {
     
     let screenWidth = UIScreen.main.bounds.width
     let screenHeight = UIScreen.main.bounds.height
+    private let gameplayBannerHorizontalPadding: CGFloat = 24
      
     @State var showGameOver = false
     @State var score = 0
     @State private var isScaled = false
     @State private var scene: GameScene?
+    @State private var usedRewardedContinue = false
     
     var body: some View {
         ZStack {
@@ -38,9 +40,25 @@ struct GameSceneView: View {
                 Spacer()
             }
 
+            if !showGameOver {
+                VStack {
+                    BannerAdView(width: screenWidth - (gameplayBannerHorizontalPadding * 2))
+                        .frame(
+                            width: screenWidth - (gameplayBannerHorizontalPadding * 2),
+                            height: 64
+                        )
+                        .padding(.top, 28)
+                    Spacer()
+                }
+            }
+
             if showGameOver {
-                GameOverView(score: score) {
+                GameOverView(score: score, canUseRewardedContinue: !usedRewardedContinue) {
+                    usedRewardedContinue = false
                     scene?.restartGame()
+                } onRewardedContinue: {
+                    usedRewardedContinue = true
+                    scene?.continueAfterRewardedAd()
                 }
                 .navigationBarBackButtonHidden(true)
             }

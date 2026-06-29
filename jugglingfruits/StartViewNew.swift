@@ -34,6 +34,8 @@ struct StartViewNew: View {
                     .navigationBarBackButtonHidden(true)
                 }
                 .padding(.bottom, 24)
+                BannerAdView(width: 320)
+                    .frame(width: 320, height: 50)
                 Spacer()
             }.background(Color("Yellow"))
                 .onAppear() {

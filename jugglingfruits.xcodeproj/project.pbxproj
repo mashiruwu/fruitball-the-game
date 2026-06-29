@@ -11,6 +11,10 @@
 		8B11BD1E2BD6E5AA0063A50C /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = 8B11BD1D2BD6E5AA0063A50C /* FacebookCore */; };
 		8B11BD242BD7F9580063A50C /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B11BD232BD7F9580063A50C /* AdSupport.framework */; };
 		8B11BD262BD7F9620063A50C /* AppTrackingTransparency.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B11BD252BD7F9620063A50C /* AppTrackingTransparency.framework */; };
+		8B21AD032F0000030063A50C /* BannerAdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B21AD002F0000000063A50C /* BannerAdView.swift */; };
+		8B21AD042F0000040063A50C /* AdMobConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B21AD012F0000010063A50C /* AdMobConfig.swift */; };
+		8B21AD052F0000050063A50C /* AdMobManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B21AD022F0000020063A50C /* AdMobManager.swift */; };
+		8B21AD082F0000080063A50C /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 8B21AD072F0000070063A50C /* GoogleMobileAds */; };
 		8B5292232BD3774A0022DB9C /* jugglingfruitsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B5292222BD3774A0022DB9C /* jugglingfruitsApp.swift */; };
 		8B5292272BD3774C0022DB9C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8B5292262BD3774C0022DB9C /* Assets.xcassets */; };
 		8B52922A2BD3774C0022DB9C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8B5292292BD3774C0022DB9C /* Preview Assets.xcassets */; };
@@ -25,6 +29,9 @@
 		8B11BD172BD68E010063A50C /* SigmarOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SigmarOne-Regular.ttf"; sourceTree = "<group>"; };
 		8B11BD232BD7F9580063A50C /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		8B11BD252BD7F9620063A50C /* AppTrackingTransparency.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppTrackingTransparency.framework; path = System/Library/Frameworks/AppTrackingTransparency.framework; sourceTree = SDKROOT; };
+		8B21AD002F0000000063A50C /* BannerAdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerAdView.swift; sourceTree = "<group>"; };
+		8B21AD012F0000010063A50C /* AdMobConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdMobConfig.swift; sourceTree = "<group>"; };
+		8B21AD022F0000020063A50C /* AdMobManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdMobManager.swift; sourceTree = "<group>"; };
 		8B52921F2BD3774A0022DB9C /* jugglingfruits.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = jugglingfruits.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B5292222BD3774A0022DB9C /* jugglingfruitsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = jugglingfruitsApp.swift; sourceTree = "<group>"; };
 		8B5292262BD3774C0022DB9C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -46,6 +53,7 @@
 				8B11BD262BD7F9620063A50C /* AppTrackingTransparency.framework in Frameworks */,
 				8B11BD242BD7F9580063A50C /* AdSupport.framework in Frameworks */,
 				8B11BD1E2BD6E5AA0063A50C /* FacebookCore in Frameworks */,
+				8B21AD082F0000080063A50C /* GoogleMobileAds in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,6 +91,9 @@
 			children = (
 				8B5292412BD3BDF60022DB9C /* jugglingfruits.entitlements */,
 				8B52923F2BD3B31A0022DB9C /* Info.plist */,
+				8B21AD012F0000010063A50C /* AdMobConfig.swift */,
+				8B21AD022F0000020063A50C /* AdMobManager.swift */,
+				8B21AD002F0000000063A50C /* BannerAdView.swift */,
 				8B5292332BD3B06F0022DB9C /* GameSceneView.swift */,
 				8B5292352BD3B09B0022DB9C /* GameOverView.swift */,
 				8B5292222BD3774A0022DB9C /* jugglingfruitsApp.swift */,
@@ -122,6 +133,7 @@
 			name = jugglingfruits;
 			packageProductDependencies = (
 				8B11BD1D2BD6E5AA0063A50C /* FacebookCore */,
+				8B21AD072F0000070063A50C /* GoogleMobileAds */,
 			);
 			productName = jugglingfruits;
 			productReference = 8B52921F2BD3774A0022DB9C /* jugglingfruits.app */;
@@ -153,6 +165,7 @@
 			mainGroup = 8B5292162BD3774A0022DB9C;
 			packageReferences = (
 				8B11BD1C2BD6E5A90063A50C /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
+				8B21AD062F0000060063A50C /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 			);
 			productRefGroup = 8B5292202BD3774A0022DB9C /* Products */;
 			projectDirPath = "";
@@ -184,7 +197,10 @@
 				8B5292362BD3B09B0022DB9C /* GameOverView.swift in Sources */,
 				8B52923A2BD3B0C10022DB9C /* GameService.swift in Sources */,
 				8B5292322BD3B0560022DB9C /* GameScene.swift in Sources */,
+				8B21AD042F0000040063A50C /* AdMobConfig.swift in Sources */,
 				8B5292382BD3B0AB0022DB9C /* StartViewNew.swift in Sources */,
+				8B21AD052F0000050063A50C /* AdMobManager.swift in Sources */,
+				8B21AD032F0000030063A50C /* BannerAdView.swift in Sources */,
 				8B5292342BD3B06F0022DB9C /* GameSceneView.swift in Sources */,
 				8B5292232BD3774A0022DB9C /* jugglingfruitsApp.swift in Sources */,
 			);
@@ -336,7 +352,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.candidohdiego.fruitball;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -371,7 +387,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.candidohdiego.fruitball;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -414,6 +430,14 @@
 				minimumVersion = 17.0.0;
 			};
 		};
+		8B21AD062F0000060063A50C /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -421,6 +445,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8B11BD1C2BD6E5A90063A50C /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
 			productName = FacebookCore;
+		};
+		8B21AD072F0000070063A50C /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8B21AD062F0000060063A50C /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
