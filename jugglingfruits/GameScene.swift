@@ -5,13 +5,10 @@
 //
 
 import SpriteKit
-import GameplayKit
 import SwiftUI
 import GameKit
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
-    var kick = CGFloat(5)
-    
     var rotation: CGFloat = 0.0
 
     var initialPositionY: CGFloat = UIScreen.main.bounds.height - 300
@@ -29,18 +26,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var spriteBall = SKSpriteNode(imageNamed: "Group-0")
     let leg = SKSpriteNode(imageNamed: "legTorto")
-    let scoreNumberLabel = SKLabelNode(fontNamed: "SigmarOne-Regular")
     let backgroundImage = SKSpriteNode(imageNamed: "backgroundPark")
     let ground = SKSpriteNode(imageNamed: "chaoCampo")
-    let scoreLabel = SKLabelNode(fontNamed: "SigmarOne-Regular")
-
-    var changed = false
     
     var started = false
     
     let playLabel = SKLabelNode(fontNamed: "SigmarOne-Regular")
     let highscoreLabelTextStart = SKLabelNode(fontNamed: "SigmarOne-Regular")
-    let scoreLabelTextStart = SKLabelNode(fontNamed: "SigmarOne-Regular")
     let highscoreLabelStart = SKLabelNode(fontNamed: "SigmarOne-Regular")
 
     let juggleLabel = SKLabelNode(fontNamed: "SigmarOne-Regular")
@@ -73,7 +65,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if startGameScene == false {
             backgroundImage.removeFromParent()
             ground.removeFromParent()
-            scoreNumberLabel.removeFromParent()
             spriteBall.removeFromParent()
             leg.removeFromParent()
             spriteBall.physicsBody?.affectedByGravity = false
@@ -83,7 +74,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         } else {
             juggleLabel.removeFromParent()
             highscoreLabelTextStart.removeFromParent()
-            scoreLabelTextStart.removeFromParent()
             playLabel.removeFromParent()
             highscoreLabelStart.removeFromParent()
             playGame()
@@ -133,8 +123,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         leg.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
 
         
-        showScoreAnimation()
-        
         highscore = UserDefaults.standard.integer(forKey: "highscore")
         
         self.physicsWorld.contactDelegate = self
@@ -170,9 +158,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         spriteBall.physicsBody?.affectedByGravity = false
         addChild(spriteBall)
         
-        leg.size = CGSize(width: 216, height: 216)
-        leg.position = CGPoint(x: 100, y: 200)
-        
         leg.size = CGSize(width: 105.6, height: 456)
         leg.position = CGPoint(x: 0, y: 200)
         
@@ -191,8 +176,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         leg.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
         addChild(leg)
 
-        
-        showScoreAnimation()
         
         highscore = UserDefaults.standard.integer(forKey: "highscore")
         
@@ -231,18 +214,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(highscoreLabelStart)
     }
     
-    func showScoreAnimation() {
-        let scaleUpAction = SKAction.scale(to: 1.2, duration: 0.5)
-        scaleUpAction.timingMode = .easeInEaseOut
-
-        let scaleDownAction = SKAction.scale(to: 1.0, duration: 0.2)
-        scaleDownAction.timingMode = .easeInEaseOut
-
-        let sequence = SKAction.sequence([scaleUpAction, scaleDownAction])
-
-        scoreNumberLabel.run(sequence)
-    }
-    
     func animateGround() {
         ground.position = CGPoint(x: size.width / 2, y: -ground.size.height)
 
@@ -261,9 +232,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     func didBegin(_ contact: SKPhysicsContact) {
-        print("contact!!!")
         spriteBall.physicsBody?.velocity.dy = 400
-        print(score)
         touch = true
         heightInTouch = spriteBall.position.y
         let generator = UIImpactFeedbackGenerator(style: .light)
@@ -287,7 +256,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if started == false {
                 juggleLabel.removeFromParent()
                 highscoreLabelTextStart.removeFromParent()
-                scoreLabelTextStart.removeFromParent()
                 playLabel.removeFromParent()
                 highscoreLabelStart.removeFromParent()
                 self.backgroundColor = UIColor(.white)
@@ -298,15 +266,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 startGameScene = true
             } else {
                 leg.physicsBody?.angularVelocity = 5
-                print(leg.zRotation)
                 spriteBall.physicsBody?.affectedByGravity = true
-                
             }
         }
-    }
-    
-    func touchMoved(toPoint pos : CGPoint) {
-
     }
     
     func touchUp(atPoint pos : CGPoint) {
@@ -317,10 +279,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         for t in touches { self.touchDown(atPoint: t.location(in: self)) }
-    }
-    
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchMoved(toPoint: t.location(in: self)) }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -338,7 +296,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if score > highscore {
                     highscore = score
                     UserDefaults.standard.setValue(highscore, forKey: "highscore")
-                    UserDefaults.standard.synchronize()
                     if GKLocalPlayer.local.isAuthenticated {
                         let score = GKScore(leaderboardIdentifier: "leaderboard")
                         score.value =  Int64(highscore)
@@ -361,7 +318,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             if spriteBall.position.y > heightInTouch * 1.2 && touch == true {
                 score += 1
-                showScoreAnimation()
                 touch = false
                 
                 if score % 10 == 0 && score != 0{
@@ -376,32 +332,43 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             
             if leg.zRotation >= 2 {
-                leg.zRotation = leg.zRotation
                 leg.physicsBody?.angularVelocity = 0
                 leg.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-                
             }
             if leg.zRotation <= 0.5 {
-                leg.zRotation = leg.zRotation
                 leg.physicsBody?.angularVelocity = 0
                 leg.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
             }
-            scoreNumberLabel.text =  String(format: "%02d", 444)
         }
     }
 
-    func resetBallPosition() {
-        if let view = self.view {
-            spriteBall.position.y = initialPositionY
-            spriteBall.position.x = initialPositionX
+    func restartGame() {
+        showGameOver = false
+        score = 0
+        touch = false
+        heightInTouch = 0
+        started = true
+        startGameScene = true
+        currentFruit = 0
 
-            spriteBall.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-            spriteBall.physicsBody?.angularVelocity = 0
-            leg.zRotation = rotation
-            leg.physicsBody?.angularVelocity = 0
-            touch = false
-            started = false
-
+        if fruits.isEmpty {
+            for i in 0...31 {
+                fruits.append("Group-\(i)")
+            }
         }
+
+        spriteBall.position.y = initialPositionY
+        spriteBall.position.x = initialPositionX
+        spriteBall.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+        spriteBall.physicsBody?.angularVelocity = 0
+        spriteBall.physicsBody?.affectedByGravity = false
+
+        if !fruits.isEmpty {
+            spriteBall.texture = SKTexture(imageNamed: fruits[0])
+        }
+
+        leg.zRotation = rotation
+        leg.physicsBody?.angularVelocity = 0
+        leg.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
     }
 }

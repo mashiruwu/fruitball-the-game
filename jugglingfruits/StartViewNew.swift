@@ -6,11 +6,9 @@
 //
 
 import SwiftUI
-import GameKit
 
 
 struct StartViewNew: View {
-    let highscore = UserDefaults.standard.integer(forKey: "highscore")
     let gameService = GameService()
     
     var body: some View {

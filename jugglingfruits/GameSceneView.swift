@@ -13,46 +13,53 @@ struct GameSceneView: View {
     let screenHeight = UIScreen.main.bounds.height
      
     @State var showGameOver = false
-    @State var path = NavigationPath()
     @State var score = 0
     @State private var isScaled = false
-    var scene: SKScene {
-        let scene = GameScene(size: CGSize(width: 288, height: 512), showGameOver: $showGameOver, score: $score)
-        
-        scene.scaleMode = .fill
-        scene.backgroundColor = .white
-        
-        return scene
-    }
+    @State private var scene: GameScene?
     
     var body: some View {
-            ZStack {
-                                
+        ZStack {
+            if let scene {
                 SpriteView(scene: scene)
                     .frame(width: screenWidth, height: screenHeight, alignment: .center)
                     .edgesIgnoringSafeArea(.all)
-                NavigationLink(
-                    destination: GameOverView(score: score)
-                        .navigationBarBackButtonHidden(true),
-                    isActive: $showGameOver,
-                    label: { Text("") }
-                )
-                VStack{
-                    Spacer()
-                    Text(String(score))
-                        .font(.custom("SigmarOne-Regular", size: isScaled ? 165 * 1.5 : 165))
-                        .padding(.bottom, 420)
-                        .foregroundStyle(Color.white)
-                        .shadow(radius: 8)
-                        .onChange(of: score) { _ in
-                            showScoreAnimation()
-                        }
-                    Spacer()
-                }
             }
-            .navigationBarBackButtonHidden(true)
-            .background(.red)
+
+            VStack {
+                Spacer()
+                Text(String(score))
+                    .font(.custom("SigmarOne-Regular", size: isScaled ? 165 * 1.5 : 165))
+                    .padding(.bottom, 420)
+                    .foregroundStyle(Color.white)
+                    .shadow(radius: 8)
+                    .onChange(of: score) { _ in
+                        showScoreAnimation()
+                    }
+                Spacer()
+            }
+
+            if showGameOver {
+                GameOverView(score: score) {
+                    scene?.restartGame()
+                }
+                .navigationBarBackButtonHidden(true)
+            }
         }
+        .onAppear {
+            guard scene == nil else { return }
+
+            let newScene = GameScene(
+                size: CGSize(width: 288, height: 512),
+                showGameOver: $showGameOver,
+                score: $score
+            )
+            newScene.scaleMode = .fill
+            newScene.backgroundColor = .white
+            scene = newScene
+        }
+        .navigationBarBackButtonHidden(true)
+        .background(.red)
+    }
     
     func showScoreAnimation() {
         withAnimation(.easeInOut(duration: 0.5)) {
@@ -60,7 +67,7 @@ struct GameSceneView: View {
         }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            withAnimation() {
+            withAnimation {
                 isScaled = false
             }
         }

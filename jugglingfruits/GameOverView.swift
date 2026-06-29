@@ -6,15 +6,12 @@
 //
 
 import SwiftUI
-import GameKit
 
 struct GameOverView: View {
 
     @State var highscore = UserDefaults.standard.integer(forKey: "highscore")
-        
-    @State var showGameSceneView = false
-    
-    @State var score: Int
+    let score: Int
+    let onPlayAgain: () -> Void
     
     @Environment(\.dismiss) var dismiss
 
@@ -83,14 +80,12 @@ struct GameOverView: View {
                                 Image("BottunBrownLeaderboard")
                                     .padding(.trailing, 24)
                             })
-                            NavigationLink(
-                                destination: GameSceneView()
-                                    .navigationBarBackButtonHidden(true),
-                                label: {
-                                    Image("ButtonBrownPlay")
-                                        .padding(.leading, 24)
-                                }
-                            )
+                            Button(action: {
+                                onPlayAgain()
+                            }, label: {
+                                Image("ButtonBrownPlay")
+                                    .padding(.leading, 24)
+                            })
                         }
 
                         Spacer()
@@ -102,7 +97,6 @@ struct GameOverView: View {
             }
             .ignoresSafeArea(.all)
             .onAppear(){
-                UserDefaults.standard.synchronize()
                 highscore = UserDefaults.standard.integer(forKey: "highscore")
         }
     }

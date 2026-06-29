@@ -7,21 +7,31 @@
 
 import SwiftUI
 import UIKit
+import AVFAudio
 import FacebookCore
 import AppTrackingTransparency
-import AdSupport
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        configureAudioSession()
+
         ApplicationDelegate.shared.application(
             application,
             didFinishLaunchingWithOptions: launchOptions
         )
 
         return true
+    }
+
+    private func configureAudioSession() {
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])
+        } catch {
+            print("Failed to configure audio session: \(error.localizedDescription)")
+        }
     }
           
     func application(
